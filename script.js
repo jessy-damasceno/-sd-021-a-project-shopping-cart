@@ -1,3 +1,5 @@
+const cart = '.cart__items';
+
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
   img.className = 'item__image';
@@ -12,12 +14,14 @@ function createCustomElement(element, className, innerText) {
   return e;
 }
 
-function getSkuFromProductItem(item) {
-  return item.querySelector('span.item__sku').innerText;
-}
+// function getSkuFromProductItem(item) {
+//   return item.querySelector('span.item__sku').innerText;
+// }
 
 function cartItemClickListener(event) {
-  // coloque seu código aqui
+  const ol = document.querySelector(cart);
+  ol.removeChild(event.target);
+  saveCartItems(event.innerHTML);
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
@@ -30,12 +34,13 @@ function createCartItemElement({ sku, name, salePrice }) {
 
 async function cartAdd(event) {
   const id = event.target.parentNode.querySelector('.item__sku').innerText;
-  const ol = document.querySelector('.cart__items');
+  const ol = document.querySelector(cart);
   const response = await fetchItem(id);
-  console.log(response);
-  ol.appendChild(createCartItemElement({ sku: response.id, 
+  const element = createCartItemElement({ sku: response.id, 
     name: response.title, 
-    salePrice: response.price }));
+    salePrice: response.price });
+  ol.appendChild(element);
+  saveCartItems(element.innerHTML);
 }
 
 function createProductItemElement({ sku, name, image }) {
@@ -58,4 +63,6 @@ window.onload = async () => {
     const { id: sku, title: name, thumbnail: image } = product;
     itemsContainer.appendChild(createProductItemElement({ sku, name, image }));
   });
+  getSavedCartItems();
+  document.querySelector(cart).addEventListener('click', cartItemClickListener);
 };
