@@ -1,4 +1,12 @@
-const cart = '.cart__items';
+const cartItems = document.querySelector('.cart__items');
+const cleanCartButton = document.querySelector('.empty-cart');
+
+function cleanCart() {
+  cartItems.innerHTML = '';
+  saveCartItems(cartItems.innerHTML);
+}
+
+cleanCartButton.addEventListener('click', cleanCart);
 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -14,14 +22,11 @@ function createCustomElement(element, className, innerText) {
   return e;
 }
 
-// function getSkuFromProductItem(item) {
-//   return item.querySelector('span.item__sku').innerText;
-// }
-
 function cartItemClickListener(event) {
-  const ol = document.querySelector(cart);
-  ol.removeChild(event.target);
-  saveCartItems(event.innerHTML);
+  if (event.target !== cartItems) {
+    event.target.remove();
+    saveCartItems(cartItems.innerHTML);
+  }
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
@@ -34,13 +39,12 @@ function createCartItemElement({ sku, name, salePrice }) {
 
 async function cartAdd(event) {
   const id = event.target.parentNode.querySelector('.item__sku').innerText;
-  const ol = document.querySelector(cart);
   const response = await fetchItem(id);
-  const element = createCartItemElement({ sku: response.id, 
-    name: response.title, 
+  const element = createCartItemElement({ sku: response.id,
+    name: response.title,
     salePrice: response.price });
-  ol.appendChild(element);
-  saveCartItems(element.innerHTML);
+  cartItems.appendChild(element);
+  saveCartItems(cartItems.innerHTML);
 }
 
 function createProductItemElement({ sku, name, image }) {
@@ -63,6 +67,6 @@ window.onload = async () => {
     const { id: sku, title: name, thumbnail: image } = product;
     itemsContainer.appendChild(createProductItemElement({ sku, name, image }));
   });
-  getSavedCartItems();
-  document.querySelector(cart).addEventListener('click', cartItemClickListener);
+  cartItems.innerHTML = getSavedCartItems();
+  cartItems.addEventListener('click', cartItemClickListener);
 };
