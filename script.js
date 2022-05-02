@@ -13,7 +13,7 @@ function somaCart() {
   if (array) {
   const valores = array
     .join('')
-    .replaceAll('$', ' ')
+    .replace(/\$/g, ' ')
     .split(' ')
     .splice(1);
   const loucura = valores.reduce((acc, cur) => acc + parseFloat(cur), 0);
