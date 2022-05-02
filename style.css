@@ -103,7 +103,9 @@ body {
 }
 
 .item .item__sku {
-  display: none;
+  text-align: right;
+
+  /* display: none; */
 }
 
 .item .item__title {
