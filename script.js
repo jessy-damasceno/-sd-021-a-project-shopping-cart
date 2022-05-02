@@ -1,9 +1,36 @@
 const cartItems = document.querySelector('.cart__items');
 const cleanCartButton = document.querySelector('.empty-cart');
+const cart = document.querySelector('.cart');
+
+/* const somaCart = () => {
+  const cartItems = cart.innerHTML;
+  if (cartItems === '') soma.innerText = 0;
+  const array = cartItems.match(/\$\d{1,9}(?:\.\d{1,2})/g);
+  console.log(array);
+  if (array) {
+    const listaPrecos = array.join('').replaceAll('$', ' ').split(' ').splice(1);
+  soma.innerText = listaPrecos.reduce((acc, item) => acc + parseFloat(item), 0).toFixed(2); */
 
 function cleanCart() {
   cartItems.innerHTML = '';
   saveCartItems(cartItems.innerHTML);
+}
+
+function somaCart() {
+  const totalPrice = document.querySelector('.total-price');
+  const array = cartItems.innerHTML.match(/\$\d{1,9}(?:\.\d{1,2})|\$\d{1,9}/g);
+  if (array) {
+  const valores = array
+    .join('')
+    .replaceAll('$', ' ')
+    .split(' ')
+    .splice(1);
+  const loucura = valores.reduce((acc, cur) => acc + parseFloat(cur), 0);
+  const outa = parseInt(loucura, 10);
+  totalPrice.innerHTML = `${(loucura === outa) ? outa : loucura}`;
+  } else {
+    totalPrice.innerHTML = '0';
+  }
 }
 
 cleanCartButton.addEventListener('click', cleanCart);
@@ -24,6 +51,7 @@ function createCustomElement(element, className, innerText) {
 
 function cartItemClickListener(event) {
   if (event.target !== cartItems) {
+    somaCart();
     event.target.remove();
     saveCartItems(cartItems.innerHTML);
   }
@@ -45,6 +73,7 @@ async function cartAdd(event) {
     salePrice: response.price });
   cartItems.appendChild(element);
   saveCartItems(cartItems.innerHTML);
+  somaCart();
 }
 
 function createProductItemElement({ sku, name, image }) {
@@ -61,12 +90,15 @@ function createProductItemElement({ sku, name, image }) {
 }
 
 window.onload = async () => {
-  const products = await fetchProducts('computador');
   const itemsContainer = document.querySelector('.items');
+  itemsContainer.appendChild(createCustomElement('p', 'loading', 'carregando...'));
+  const products = await fetchProducts('computador');
+  itemsContainer.removeChild(document.querySelector('.loading'));
   products.results.forEach((product) => {
     const { id: sku, title: name, thumbnail: image } = product;
     itemsContainer.appendChild(createProductItemElement({ sku, name, image }));
   });
   cartItems.innerHTML = getSavedCartItems();
   cartItems.addEventListener('click', cartItemClickListener);
+  cart.appendChild(createCustomElement('span', 'total-price', '0'));
 };
