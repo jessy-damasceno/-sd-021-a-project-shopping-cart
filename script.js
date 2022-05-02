@@ -2,15 +2,6 @@ const cartItems = document.querySelector('.cart__items');
 const cleanCartButton = document.querySelector('.empty-cart');
 const cart = document.querySelector('.cart');
 
-/* const somaCart = () => {
-  const cartItems = cart.innerHTML;
-  if (cartItems === '') soma.innerText = 0;
-  const array = cartItems.match(/\$\d{1,9}(?:\.\d{1,2})/g);
-  console.log(array);
-  if (array) {
-    const listaPrecos = array.join('').replaceAll('$', ' ').split(' ').splice(1);
-  soma.innerText = listaPrecos.reduce((acc, item) => acc + parseFloat(item), 0).toFixed(2); */
-
 function cleanCart() {
   cartItems.innerHTML = '';
   saveCartItems(cartItems.innerHTML);
